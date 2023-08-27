@@ -1,4 +1,15 @@
 //autobind decorator
+function autobind(_: any, _2: string, descriptor: PropertyDescriptor) {
+  const originMethod = descriptor.value;
+  const adjDescriptor: PropertyDescriptor = {
+    configurable: true,
+    get() {
+      const boundFn = originMethod.bind(this);
+      return boundFn;
+    },
+  };
+  return adjDescriptor;
+}
 
 class ProjectInput {
   templateElement: HTMLTemplateElement;
@@ -30,12 +41,13 @@ class ProjectInput {
     this.configure();
     this.attach();
   }
+  @autobind
   private subMitHandler(event: Event) {
     event.preventDefault();
     console.log(this.titleInputElement.value);
   }
   private configure() {
-    this.element.addEventListener("submit", this.subMitHandler.bind(this));
+    this.element.addEventListener("submit", this.subMitHandler);
   }
   private attach() {
     this.hostELement.insertAdjacentElement("afterbegin", this.element);
